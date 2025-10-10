@@ -22,44 +22,6 @@ app.use(express.json());
 //    Example: http://localhost:3000/index.html
 app.use(express.static('public'));
 
-// POST /api/send-test
-// Sends a very simple plain-text test email using Resend.
-// No attachments, no HTML table — just a minimal test to verify mail delivery.
-app.post('/api/send-test', async (req, res) => {
-    try {
-      // Read from .env values (set these earlier)
-      const from = process.env.RESEND_FROM;      // e.g. onboarding@resend.dev
-      const to = process.env.RESEND_TEST_TO;     // your inbox for testing
-  
-      // Defensive checks to give clearer error messages
-      if (!process.env.RESEND_API_KEY) {
-        return res.status(500).json({ ok: false, error: 'Missing RESEND_API_KEY in environment' });
-      }
-      if (!from || !to) {
-        return res.status(400).json({ ok: false, error: 'Please set RESEND_FROM and RESEND_TEST_TO in .env' });
-      }
-  
-      // Compose and send the email via Resend
-      const result = await resend.emails.send({
-        from,
-        to,
-        subject: 'Resend test — Badge Request app',
-        text: `This is a test message sent by your local Badge Request app at ${new Date().toISOString()}.`
-        // optional: html: '<p>HTML test</p>'
-      });
-  
-      // Log full result for debugging (safe locally)
-      console.log('✅ Resend send result:', result);
-  
-      // Respond to the caller with success and the Resend response id
-      return res.json({ ok: true, id: result.id, result });
-    } catch (err) {
-      console.error('❌ Resend send error:', err);
-      // Try to give the caller useful information without exposing secret data
-      return res.status(500).json({ ok: false, error: err.message || err });
-    }
-});
-
 app.post('/api/send', async (req, res) => {
   try {
     // Extract fields from frontend JSON

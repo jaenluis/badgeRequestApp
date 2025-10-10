@@ -123,7 +123,14 @@ app.post('/api/send', async (req, res) => {
   }
 });
 
-// 7. Start the server
-app.listen(PORT, () => {
-  console.log(`✅ Server is running at http://localhost:${PORT}`);
-});
+// 7. Export the app for Vercel
+// When running locally (`node server.js`), start the server manually.
+// When running on Vercel, Vercel will automatically handle the server.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`✅ Local server running at http://localhost:${PORT}`);
+  });
+}
+
+// Export for Vercel's serverless handler
+module.exports = app;

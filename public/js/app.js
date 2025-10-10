@@ -1,6 +1,12 @@
 // ✅ Import Supabase client
 import { supabase } from "./supabaseClient.js";
 
+// ✅ Detect environment and set API base URL dynamically
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000" // local dev backend
+    : "https://badge-request-app.vercel.app"; // Vercel backend
+
 // Local collection to hold entries
 const entries = [];
 
@@ -196,12 +202,12 @@ document.getElementById("badgeForm").addEventListener("submit", async (e) => {
 
     // ✅ Send POST request to backend API
     try {
-        const response = await fetch("/api/send", {
+        const response = await fetch(`${API_BASE_URL}/api/send`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
-
+          
         if (!response.ok) {
             const text = await response.text();
             console.error("Server error:", text);

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Badge Request Form</title>
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <h1>Badge Request Form</h1>
+    
+        <!-- 🔹 Container holds form + entries side by side -->
+        <div class="layout">
+        <!-- 🔹 Requester section -->
+            <form id="badgeForm">
+                <label for="requesterName">Requester Name</label>
+                <input type="text" id="requesterName" required />
+        
+                <!-- 🔹 Company selection -->
+                <label>Company</label>
+                <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="company1" name="company" value="The Home Depot" checked />
+                    <label for="company1">The Home Depot</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="company2" name="company" value="Link" />
+                    <label for="company2">Link</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="company3" name="company" value="Impact" />
+                    <label for="company3">Impact</label>
+                </div>
+                </div>
+        
+                <!-- 🔹 ID type -->
+                <label for="idType">ID Type</label>
+                <select id="idType" required>
+                <option value="LDAP">LDAP</option>
+                <option value="Time Clock">Time Clock</option>
+                </select>
+        
+                <!-- 🔹 Associate info -->
+                <label for="employeeName">Associate Name</label>
+                <div class="input-wrapper">
+                    <input type="text" id="employeeName" />
+                    <div class="error-slot"></div>
+                </div>
+        
+                <label for="ldapField" class="conditional ldap">LDAP</label>
+                <div class="input-wrapper ldap">
+                    <input type="text" id="ldapField" class="conditional ldap" />
+                    <div class="error-slot"></div> <!-- 🔹 place for error message -->
+                </div>
+
+                <label for="ainField" class="conditional timeclock" style="display:none;">AIN</label>
+                <div class="input-wrapper timeclock" style="display:none;">
+                    <input type="text" id="ainField" class="conditional timeclock" style="display:none;" />
+                    <div class="error-slot"></div> <!-- 🔹 place for error message -->
+                </div>
+
+                <!-- 🔹 Tooltip / warning for partial input -->
+                <div id="partialWarning" style="display:none; color:#856404; background:#fff3cd; border:1px solid #ffeeba; padding:6px; border-radius:4px; margin-bottom:10px;">
+                    You have a partially filled entry. Click <strong>Add Entry</strong> to save it or clear the fields to ignore it.
+                </div>
+                <!-- 🔹 Buttons -->
+                <div class="button-row">
+                    <button type="button" id="addMoreBtn">Add Entry</button>
+                    <button type="submit" id="doneBtn" style="display:none;">Done</button>
+                </div>
+            </form>
+        <!-- 🔹 Entries table -->
+            <div id="entries">
+                <h2>Current Entries</h2>
+                <table>
+                    <thead>
+                        <tr>
+                        <th>Employee</th>
+                        <th>LDAP</th>
+                        <th>AIN</th>
+                        <th>Company</th>
+                        </tr>
+                    </thead>
+                    <tbody id="entriesBody">
+                        <!-- rows will be inserted here -->
+                    </tbody>
+                </table>
+        </div>
+        </div>
+    
+        <script type="module" src="js/app.js"></script>
+    <!-- ✅ Submission Success Modal -->
+        <div id="successModal" 
+            style="display:none; 
+                position:fixed; 
+                top:0; left:0; 
+                width:100%; height:100%; 
+                background-color:rgba(0,0,0,0.6); 
+                z-index:1000; 
+                align-items:center; 
+                justify-content:center;">
+            <div style="background:#faf9f9; 
+                    padding:2rem 3rem; 
+                    border-radius:12px; 
+                    box-shadow:0 4px 12px rgba(0,0,0,0.2); 
+                    text-align:center; 
+                    max-width:400px;">
+                <h2 style="margin-bottom:1rem; color:#10b981;">✅ Request Submitted Successfully!</h2>
+                <p style="color:#555;">Your badge request has been sent.</p>
+                <button id="closeModalBtn" 
+                    style="margin-top:1.5rem; 
+                            padding:0.5rem 1.2rem; 
+                            background-color:#10b981; 
+                            color:white; 
+                            border:none; 
+                            border-radius:8px; 
+                            cursor:pointer;">
+                    Close
+                </button>
+            </div>
+        </div>   
+    </body>
+</html>

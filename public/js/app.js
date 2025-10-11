@@ -55,6 +55,45 @@ idTypeSelect.addEventListener("change", updateIdTypeFields);
 // Ensure the UI is correct on initial load (page open / script run)
 updateIdTypeFields();
 
+// Hide/show the ID Type dropdown and force LDAP for Link/Impact companies.
+// Called when the company radio changes, and once on load.
+function updateCompanyBehavior() {
+    // read the currently selected company (may be undefined if none selected)
+    const company = document.querySelector("input[name='company']:checked")?.value;
+  
+    // DOM wrapper we added in HTML above
+    const idTypeWrapper = document.getElementById("idTypeWrapper");
+  
+    // If Link or Impact → hide the dropdown and force LDAP mode
+    if (company === "Link" || company === "Impact") {
+      idTypeWrapper.style.display = "none";  // hide the whole dropdown block
+      idTypeSelect.value = "LDAP";           // force value
+      // show ldap fields, hide timeclock fields to keep UI consistent
+      document.querySelectorAll(".ldap").forEach(el => el.style.display = "block");
+      document.querySelectorAll(".timeclock").forEach(el => el.style.display = "none");
+  
+      // clear any previous inline errors for those fields (user-friendly)
+      clearError(document.getElementById("ldapField"));
+      clearError(document.getElementById("ainField"));
+
+      //clear AIN if filled previously
+      document.getElementById("ainField").value = "";
+      
+    } else {
+      // show the dropdown and let existing logic control field visibility
+      idTypeWrapper.style.display = "block";
+      updateIdTypeFields();
+    }
+}
+
+// Wire company radio buttons to call the function whenever the choice changes
+document.querySelectorAll("input[name='company']").forEach(radio => {
+    radio.addEventListener("change", updateCompanyBehavior);
+});
+  
+// Ensure the UI respects the currently selected company on page load
+updateCompanyBehavior();
+
 // Add entry to table
 async function addEntry() {
     // Clear any old errors
@@ -64,7 +103,10 @@ async function addEntry() {
     const requesterName = document.getElementById("requesterName").value.trim();
     const company = document.querySelector("input[name='company']:checked").value;
     const employeeName = document.getElementById("employeeName").value.trim();
-    const idType = document.getElementById("idType").value;
+    // When Link/Impact are selected, force LDAP (we hide the dropdown); otherwise read dropdown
+    const idType = (company === "Link" || company === "Impact")
+        ? "LDAP"
+        : document.getElementById("idType").value;
     const ldap = idType === "LDAP" ? document.getElementById("ldapField").value.trim() : "";
     const ain = idType === "Time Clock" ? document.getElementById("ainField").value.trim() : "";
 
@@ -82,11 +124,24 @@ async function addEntry() {
         return;
     }
     
-    // ✅ LDAP format check
+    // ✅ LDAP format check — company-specific lengths (Link=11, Impact=10, default=7)
     if (idType === "LDAP") {
-        const ldapRegex = /^[a-zA-Z0-9]{7}$/;
+        let ldapRegex;
+        let ldapMessage;
+
+        if (company === "Link") {
+            ldapRegex = /^[a-zA-Z0-9]{11}$/;
+            ldapMessage = "Link LDAP must be exactly 11 alphanumeric characters.";
+        } else if (company === "Impact") {
+            ldapRegex = /^[a-zA-Z0-9]{10}$/;
+            ldapMessage = "Impact LDAP must be exactly 10 alphanumeric characters.";
+        } else {
+            ldapRegex = /^[a-zA-Z0-9]{7}$/;
+            ldapMessage = "LDAP must be exactly 7 letters or numbers.";
+        }
+
         if (!ldapRegex.test(ldap)) {
-            showError(document.getElementById("ldapField"), "LDAP must be exactly 7 letters or numbers.");
+            showError(document.getElementById("ldapField"), ldapMessage);
             return;
         }
     }

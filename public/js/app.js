@@ -26,7 +26,7 @@ function showError(inputEl, message) {
     msg.textContent = message;
     slot.appendChild(msg);
 }
-  
+
 function clearError(inputEl) {
     inputEl.classList.remove("error");
   
@@ -78,7 +78,7 @@ function updateCompanyBehavior() {
 
       //clear AIN if filled previously
       document.getElementById("ainField").value = "";
-      
+
     } else {
       // show the dropdown and let existing logic control field visibility
       idTypeWrapper.style.display = "block";
@@ -97,7 +97,7 @@ updateCompanyBehavior();
 // Add entry to table
 async function addEntry() {
     // Clear any old errors
-    ["employeeName", "ldapField", "ainField"].forEach(id => {
+    ["requesterName","employeeName", "ldapField", "ainField"].forEach(id => {
         clearError(document.getElementById(id));
     });
     const requesterName = document.getElementById("requesterName").value.trim();
@@ -111,6 +111,10 @@ async function addEntry() {
     const ain = idType === "Time Clock" ? document.getElementById("ainField").value.trim() : "";
 
     // ✅ Required fields
+    if (!requesterName) {
+        showError(document.getElementById("requesterName"), "Requester name is required.");
+        return;
+    }
     if (!employeeName) {
         showError(document.getElementById("employeeName"), "Employee name is required.");
         return;

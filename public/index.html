@@ -14,8 +14,10 @@
         <!-- 🔹 Requester section -->
             <form id="badgeForm">
                 <label for="requesterName">Requester Name</label>
-                <input type="text" id="requesterName" required />
-        
+                <div class="input-wrapper">
+                    <input type="text" id="requesterName" required />
+                    <div class="error-slot"></div> <!-- 🔹 Added to show validation errors correctly -->
+                </div>
                 <!-- 🔹 Company selection -->
                 <label>Company</label>
                 <div class="radio-group">

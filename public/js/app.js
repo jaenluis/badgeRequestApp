@@ -307,8 +307,54 @@ document.getElementById("badgeForm").addEventListener("submit", async (e) => {
    document.getElementById("doneBtn").style.display = "none";
 });
 
+// 🔹 Auto-reset form after 10 minutes of inactivity
+let inactivityTimer;
+
+// Function to fully reset the form & entries (same as after submit)
+function resetFormCompletely() {
+    console.log("⏰ Auto-reset triggered after 10 minutes of inactivity.");
+
+    // Clear entries array
+    entries.length = 0;
+
+    // Clear table rows
+    document.getElementById("entriesBody").innerHTML = "";
+
+    // Clear form fields
+    document.getElementById("employeeName").value = "";
+    document.getElementById("ldapField").value = "";
+    document.getElementById("ainField").value = "";
+    document.getElementById("requesterName").value = "";
+
+    // Reset ID type and update UI
+    document.getElementById("idType").value = "LDAP";
+    updateIdTypeFields();
+
+    // Hide Done button & partial warning
+    document.getElementById("doneBtn").style.display = "none";
+    document.getElementById("partialWarning").style.display = "none";
+
+    // Clear any validation messages
+    ["requesterName","employeeName", "ldapField", "ainField"].forEach(id => {
+        clearError(document.getElementById(id));
+    });
+}
+
+// Function to reset inactivity timer
+function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(resetFormCompletely, 10 * 60 * 1000); // 10 minutes
+}
+
+// Monitor user actions that count as activity
+["click", "keypress", "mousemove", "input", "change"].forEach(evt => {
+    document.addEventListener(evt, resetInactivityTimer);
+});
+
+// Initialize the timer when the app loads
+resetInactivityTimer();
+
 // ✅ Close modal when user clicks "Close"
 document.getElementById("closeModalBtn").addEventListener("click", () => {
     document.getElementById("successModal").style.display = "none";
 });
-  

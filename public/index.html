@@ -33,12 +33,14 @@
                 </div>
                 </div>
         
-                <!-- 🔹 ID type -->
-                <label for="idType">ID Type</label>
-                <select id="idType" required>
-                <option value="LDAP">LDAP</option>
-                <option value="Time Clock">Time Clock</option>
-                </select>
+                <!-- idTypeWrapper: we show/hide this entire block for Link / Impact -->
+                <div id="idTypeWrapper">
+                    <label for="idType">ID Type</label>
+                    <select id="idType" required>
+                        <option value="LDAP">LDAP</option>
+                        <option value="Time Clock">Time Clock</option>
+                    </select>
+                </div>
         
                 <!-- 🔹 Associate info -->
                 <label for="employeeName">Associate Name</label>

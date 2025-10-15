@@ -45,9 +45,16 @@
                 </div>
         
                 <!-- 🔹 Associate info -->
-                <label for="employeeName">Associate Name</label>
+                <!-- Associate First + Last Name (replaces single Associate Name) -->
+                <label for="employeeFirst">Associate First Name</label>
                 <div class="input-wrapper">
-                    <input type="text" id="employeeName" />
+                    <input type="text" id="employeeFirst" />
+                    <div class="error-slot"></div>
+                </div>
+
+                <label for="employeeLast">Associate Last Name</label>
+                <div class="input-wrapper">
+                    <input type="text" id="employeeLast" />
                     <div class="error-slot"></div>
                 </div>
         
@@ -79,10 +86,11 @@
                 <table>
                     <thead>
                         <tr>
-                        <th>Employee</th>
-                        <th>LDAP</th>
-                        <th>AIN</th>
-                        <th>Company</th>
+                          <th>First Name</th>
+                          <th>Last Name</th>
+                          <th>LDAP</th>
+                          <th>AIN</th>
+                          <th>Company</th>
                         </tr>
                     </thead>
                     <tbody id="entriesBody">

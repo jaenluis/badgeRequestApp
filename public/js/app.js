@@ -97,12 +97,14 @@ updateCompanyBehavior();
 // Add entry to table
 async function addEntry() {
     // Clear any old errors
-    ["requesterName","employeeName", "ldapField", "ainField"].forEach(id => {
-        clearError(document.getElementById(id));
+    ["requesterName","employeeFirst","employeeLast","ldapField","ainField"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) clearError(el); // safety check
     });
     const requesterName = document.getElementById("requesterName").value.trim();
     const company = document.querySelector("input[name='company']:checked").value;
-    const employeeName = document.getElementById("employeeName").value.trim();
+    const firstName = document.getElementById("employeeFirst").value.trim();
+    const lastName  = document.getElementById("employeeLast").value.trim();
     // When Link/Impact are selected, force LDAP (we hide the dropdown); otherwise read dropdown
     const idType = (company === "Link" || company === "Impact")
         ? "LDAP"
@@ -115,8 +117,12 @@ async function addEntry() {
         showError(document.getElementById("requesterName"), "Requester name is required.");
         return;
     }
-    if (!employeeName) {
-        showError(document.getElementById("employeeName"), "Employee name is required.");
+    if (!firstName) {
+        showError(document.getElementById("employeeFirst"), "First name is required.");
+        return;
+    }
+    if (!lastName) {
+        showError(document.getElementById("employeeLast"), "Last name is required.");
         return;
     }
     if (idType === "LDAP" && !ldap) {
@@ -160,7 +166,8 @@ async function addEntry() {
     }
     // 🔹 Prevent duplicate entries
     const isDuplicate = entries.some(entry =>
-        entry.employeeName.toLowerCase() === employeeName.toLowerCase() && 
+        entry.firstName.toLowerCase() === firstName.toLowerCase() &&
+        entry.lastName.toLowerCase() === lastName.toLowerCase() &&
         entry.company === company &&
         ((idType === "LDAP" && entry.ldap.toLowerCase() === ldap.toLowerCase()) ||
          (idType === "Time Clock" && entry.ain === ain))
@@ -180,7 +187,7 @@ async function addEntry() {
         {
             requester_name: requesterName,
             company,
-            employee_name: employeeName,
+            employee_name: `${firstName} ${lastName}`,
             ldap,
             ain
         }
@@ -193,7 +200,7 @@ async function addEntry() {
     }
 
     // Store entry in memory
-    entries.push({ requesterName, company, employeeName, ldap, ain });
+    entries.push({ requesterName, company, firstName, lastName, ldap, ain });
 
     // ✅ Show Done button after first entry
     document.getElementById("doneBtn").style.display = "inline-block";
@@ -201,7 +208,8 @@ async function addEntry() {
     // Update table
     const row = document.createElement("tr");
     row.innerHTML = `
-        <td>${employeeName}</td>
+        <td>${firstName}</td>
+        <td>${lastName}</td>
         <td>${ldap}</td>
         <td>${ain}</td>
         <td>${company}</td>
@@ -209,7 +217,8 @@ async function addEntry() {
     document.getElementById("entriesBody").appendChild(row);
 
     // Clear form fields (but keep requester + company for convenience)
-    document.getElementById("employeeName").value = "";
+    document.getElementById("employeeFirst").value = "";
+    document.getElementById("employeeLast").value = "";
     document.getElementById("ldapField").value = "";
     document.getElementById("ainField").value = "";
 
@@ -228,15 +237,16 @@ document.getElementById("badgeForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
     // ✅ Check for partially filled input
-    const employeeName = document.getElementById("employeeName").value.trim();
+    const firstName = document.getElementById("employeeFirst").value.trim();
+    const lastName  = document.getElementById("employeeLast").value.trim();
     const idType = document.getElementById("idType").value;
     const ldap = idType === "LDAP" ? document.getElementById("ldapField").value.trim() : "";
     const ain = idType === "Time Clock" ? document.getElementById("ainField").value.trim() : "";
 
-    if (employeeName || ldap || ain) {
-        // ❌ Partially filled input detected → show tooltip
+    // if user typed *anything* in the employee fields but didn’t add it → block submit
+    if (firstName || lastName || ldap || ain) {
         document.getElementById("partialWarning").style.display = "block";
-        return; // stop submission until user resolves
+        return;
     }
 
     // ✅ Hide warning if no partial input
@@ -252,7 +262,8 @@ document.getElementById("badgeForm").addEventListener("submit", async (e) => {
         requesterName: document.getElementById("requesterName").value.trim(),
         company: document.querySelector("input[name='company']:checked").value,
         entries: entries.map(e => ({
-            employeeName: e.employeeName,
+            firstName: e.firstName,
+            lastName: e.lastName,
             idType: e.ldap ? "LDAP" : "Time Clock",
             idValue: e.ldap ? e.ldap : e.ain,
             company: e.company
@@ -293,7 +304,8 @@ document.getElementById("badgeForm").addEventListener("submit", async (e) => {
     entries.length = 0; // reset array in place
  
     // 3️⃣ Reset form fields
-    document.getElementById("employeeName").value = "";
+    document.getElementById("employeeFirst").value = "";
+    document.getElementById("employeeLast").value = "";
     document.getElementById("ldapField").value = "";
     document.getElementById("ainField").value = "";
     document.getElementById("requesterName").value = "";
@@ -321,7 +333,8 @@ function resetFormCompletely() {
     document.getElementById("entriesBody").innerHTML = "";
 
     // Clear form fields
-    document.getElementById("employeeName").value = "";
+    document.getElementById("employeeFirst").value = "";
+    document.getElementById("employeeLast").value = "";
     document.getElementById("ldapField").value = "";
     document.getElementById("ainField").value = "";
     document.getElementById("requesterName").value = "";
@@ -334,9 +347,10 @@ function resetFormCompletely() {
     document.getElementById("doneBtn").style.display = "none";
     document.getElementById("partialWarning").style.display = "none";
 
-    // Clear any validation messages
-    ["requesterName","employeeName", "ldapField", "ainField"].forEach(id => {
-        clearError(document.getElementById(id));
+    // Clear any old errors
+    ["requesterName","employeeFirst","employeeLast","ldapField","ainField"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) clearError(el); // safety check
     });
 }
 

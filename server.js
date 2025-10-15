@@ -54,7 +54,7 @@ app.post('/api/send', async (req, res) => {
               (e, i) => `
                 <tr>
                   <td style="border:1px solid #ddd; padding:8px;">${i + 1}</td>
-                  <td style="border:1px solid #ddd; padding:8px;">${e.employeeName}</td>
+                  <td style="border:1px solid #ddd; padding:8px;">${e.firstName} ${e.lastName}</td>
                   <td style="border:1px solid #ddd; padding:8px;">${e.idType}</td>
                   <td style="border:1px solid #ddd; padding:8px;">${e.idValue}</td>
                   <td style="border:1px solid #ddd; padding:8px;">${e.company}</td>
